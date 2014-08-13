@@ -1,5 +1,5 @@
 # apian
-For testing APIs
+For testing APIs (synchronously)
 
 ## Install
 
