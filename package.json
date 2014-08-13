@@ -1,10 +1,13 @@
 {
   "name": "apian",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "apian =====",
   "main": "index.js",
   "directories": {
     "test": "tests"
+  },
+  "bin" : {
+    "apian" : "index.js"
   },
   "scripts": {
     "test": "nodeunit tests"
