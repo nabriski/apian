@@ -1,0 +1,34 @@
+{
+  "name": "apian",
+  "version": "0.0.0",
+  "description": "apian =====",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "nodeunit tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nabriski/apian"
+  },
+  "keywords": [
+    "test",
+    "testing",
+    "api"
+  ],
+  "author": "Itamar Nabriski",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nabriski/apian/issues"
+  },
+  "homepage": "https://github.com/nabriski/apian",
+  "dependencies": {
+    "chai": "^1.9.1",
+    "colors": "^0.6.2",
+    "minimist": "^1.1.0",
+    "superagent": "^0.18.2",
+    "synchronize": "^0.9.8"
+  }
+}
