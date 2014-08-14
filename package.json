@@ -3,11 +3,12 @@
   "version": "0.0.1",
   "description": "apian =====",
   "main": "index.js",
+  "preferGlobal": true,
   "directories": {
     "test": "tests"
   },
-  "bin" : {
-    "apian" : "index.js"
+  "bin": {
+    "apian": "index.js"
   },
   "scripts": {
     "test": "nodeunit tests"
@@ -30,8 +31,9 @@
   "dependencies": {
     "chai": "^1.9.1",
     "colors": "^0.6.2",
-    "minimist": "^1.1.0",
+    "commander": "^2.3.0",
     "superagent": "^0.18.2",
     "synchronize": "^0.9.8"
-  }
+  },
+  "devDependencies": {}
 }

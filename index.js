@@ -1,24 +1,33 @@
 #!/usr/bin/env node
+/*jslint node: true */
+"use strict";
+
 var path            = require('path'),
     superagent      = require('superagent'),
-    sync            = require('synchronize');
+    sync            = require('synchronize'),
     chai            = require('chai'),
     should          = chai.should(),
     colors          = require('colors'),
-    argv            = require('minimist')(process.argv.slice(2)),
-    outputFormat    = argv.output,
-    output          = {tests:[]};
-    tests           = require(path.resolve(argv._[0])),
-    allTestsPassed  = true;
+    output          = {tests:[]},
+    cli             = require('commander'),
+    allTestsPassed  = true,
+    tests;
 
 sync(superagent.Request.prototype, 'end');
 
 chai.config.includeStack = true;
 
+
+cli
+  .version('0.0.1')
+  .option('-o, --output <console|json>', 'Output format, default is console')
+  .parse(process.argv);
+
+tests           = require(path.resolve(cli.args[0]));
 //-------------------------------------------
 function onException(err,testName) {
 
-  if(outputFormat === "json"){
+  if(cli.output === "json"){
       err.name = testName;
       err.output = "failed";
       output.tests.push(err);
@@ -43,13 +52,13 @@ if(typeof(tests) === "function"){
 sync.fiber(function(){
 
     Object.keys(tests).forEach(function(testName){
-        if(!outputFormat){
+        if(!cli.output ){
             console.log(["Running test:",testName].join(" ").cyan.bold.inverse);
         }
         var test = tests[testName];
         try{
             test(superagent);
-            if(outputFormat === "json"){
+            if(cli.output === "json"){
                output.tests.push({name:testName,outcome:"passed"}); 
             }
             else{
@@ -62,7 +71,7 @@ sync.fiber(function(){
         }
     });
 
-    if(outputFormat === "json"){
+    if(cli.output === "json"){
         console.log(JSON.stringify(output,null,4));
     }
     else{
