@@ -20,7 +20,7 @@ chai.config.includeStack = true;
 
 cli
   .version('0.0.1')
-  .option('-o, --output <console|json>', 'Output format, default is console')
+  .option('-o, --output <console|json|html>', 'Output format, default is console')
   .parse(process.argv);
 
 if(cli.output === "json"){
