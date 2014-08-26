@@ -80,7 +80,7 @@ var res = superagent
 
 Apian uses the [Chai](http://chaijs.com/) assertion library to test the response returned by superagent.
 
-```
+``` javascript
 module.exports = function testTwitterAuth(superagent){
 
     var res = superagent
@@ -102,3 +102,33 @@ module.exports = function testTwitterAuth(superagent){
 
 ```
 
+## Test File Structure
+
+A test file can include one or more tests.
+
+#### Single test
+``` javascript
+module.exports = function testName(superagent){
+
+    // test body ...
+
+};
+
+```
+
+#### One Or More Tests
+
+``` javascript
+module.exports = {
+    
+    "first test name" : function(superagent){
+
+        //test body
+            
+    },
+    "second test name" : function(superagent){
+
+        //test body
+    }
+};
+```
