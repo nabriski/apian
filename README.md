@@ -50,3 +50,55 @@ And the output is:
 
 
 ```
+
+## Making API Calls
+
+Apian uses a synchronous version of [superagent](https://github.com/visionmedia/superagent) to make HTTP requests. Superagent's [documentation](http://visionmedia.github.io/superagent/) can be used for reference, the only difference being that ```end()```, instead of receiving a callback, returns the response.
+
+#### Superagent
+``` javascript
+superagent
+   .get('http://example.com/search')
+   .set('API-Key', 'foobar')
+   .set('Accept', 'application/json')
+   .end(function(res){
+       // handle response
+   });
+```
+
+#### Superagent in Apian
+``` javascript
+var res = superagent
+               .get('http://example.com/search')
+               .set('API-Key', 'foobar')
+               .set('Accept', 'application/json')
+               .end();
+
+```
+
+## Testing The Response
+
+Apian uses the [Chai](http://chaijs.com/) assertion library to test the response returned by superagent.
+
+```
+module.exports = function testTwitterAuth(superagent){
+
+    var res = superagent
+                .get("https://api.twitter.com/1.1/statuses/mentions_timeline.json")
+                .query({
+                    count : 2,
+                    since_id :14927799 
+                })
+                .end();
+
+    res.status.should.equal(400);
+    var json = res.body;
+
+    // expected response:
+    // { errors: [ { message: 'Bad Authentication data', code: 215 } ] } 
+    json.errors[0].message.should.equal("Bad Authentication data");
+    json.errors[0].code.should.equal(215);
+};
+
+```
+
