@@ -21,6 +21,7 @@ chai.config.includeStack = true;
 cli
   .version('0.0.1')
   .option('-o, --output <console|json|html>', 'Output format, default is console')
+  .option('-u, --url <url>', 'URL or base URL that will be passed to each test')
   .parse(process.argv);
 
 if(cli.output === "json"){
@@ -74,7 +75,7 @@ sync.fiber(function(){
 
         var test = tests[testName];
         try{
-            test(superagent);
+            test(superagent,cli.url);
             if(cli.output === "json"){
                output.tests.push({name:testName,outcome:"passed"}); 
             }

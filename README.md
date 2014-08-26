@@ -40,15 +40,15 @@ And the output is:
 ## Usage
 
 ```
-  Usage: apian [options]
+  Usage: index [options]
 
   Options:
 
     -h, --help                        output usage information
     -V, --version                     output the version number
     -o, --output <console|json|html>  Output format, default is console
-
-
+    -u, --url <url>                   URL or base URL that will be passed to each test
+  
 ```
 
 ## Making API Calls
@@ -85,6 +85,35 @@ module.exports = function testTwitterAuth(superagent){
 
     var res = superagent
                 .get("https://api.twitter.com/1.1/statuses/mentions_timeline.json")
+                .query({
+                    count : 2,
+                    since_id :14927799 
+                })
+                .end();
+
+    res.status.should.equal(400);
+    var json = res.body;
+
+    // expected response:
+    // { errors: [ { message: 'Bad Authentication data', code: 215 } ] } 
+    json.errors[0].message.should.equal("Bad Authentication data");
+    json.errors[0].code.should.equal(215);
+};
+
+```
+
+## Passing a URL or a base URL to a test
+
+``` bash
+node index.js -u https://api.twitter.com twitterBaseURL.js  
+```
+
+Where ```twitterBaseURL.js``` contents are:
+```
+module.exports = function testTwitterAuth(superagent,url){
+
+    var res = superagent
+                .get(url+"/1.1/statuses/mentions_timeline.json")
                 .query({
                     count : 2,
                     since_id :14927799 
