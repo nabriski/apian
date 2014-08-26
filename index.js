@@ -4,6 +4,7 @@
 
 var path            = require('path'),
     superagent      = require('superagent'),
+    methods         = require('methods'),
     sync            = require('synchronize'),
     chai            = require('chai'),
     should          = chai.should(),
@@ -19,10 +20,22 @@ sync(superagent.Request.prototype, 'end');
 chai.config.includeStack = true;
 
 cli
-  .version('0.0.1')
+  .version('0.0.5')
   .option('-o, --output <console|json|html>', 'Output format, default is console')
-  .option('-u, --url <url>', 'URL or base URL that will be passed to each test')
+  .option('-b, --baseurl <url>', 'Base URL to prefix to each request')
   .parse(process.argv);
+
+if(cli.baseurl){
+    methods.forEach(function(method){
+      var name = 'delete' == method ? 'del' : method;
+      method = method.toUpperCase();
+      superagent[name] = function(url, fn){
+        var req = superagent(method, cli.baseurl + url);
+        fn && req.end(fn);
+        return req;
+      };
+    });
+}
 
 if(cli.output === "json"){
     output = {tests:[]};
@@ -75,7 +88,7 @@ sync.fiber(function(){
 
         var test = tests[testName];
         try{
-            test(superagent,cli.url);
+            test(superagent);
             if(cli.output === "json"){
                output.tests.push({name:testName,outcome:"passed"}); 
             }

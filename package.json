@@ -1,6 +1,6 @@
 {
   "name": "apian",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "apian =====",
   "main": "index.js",
   "preferGlobal": true,
@@ -33,6 +33,7 @@
     "chai": "^1.9.1",
     "colors": "^0.6.2",
     "commander": "^2.3.0",
+    "methods": "^1.1.0",
     "superagent": "^0.18.2",
     "synchronize": "^0.9.8"
   },

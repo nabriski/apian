@@ -1,8 +1,8 @@
 
-module.exports = function testTwitterAuth(superagent,url){
+module.exports = function testTwitterAuth(superagent){
 
     var res = superagent
-                .get(url+"/1.1/statuses/mentions_timeline.json")
+                .get("/1.1/statuses/mentions_timeline.json")
                 .query({
                     count : 2,
                     since_id :14927799 
