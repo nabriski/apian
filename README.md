@@ -47,7 +47,7 @@ And the output is:
     -h, --help                        output usage information
     -V, --version                     output the version number
     -o, --output <console|json|html>  Output format, default is console
-    -u, --url <url>                   URL or base URL that will be passed to each test
+    -b, --baseurl <url>               Base URL to prefix to each request
   
 ```
 
@@ -102,18 +102,18 @@ module.exports = function testTwitterAuth(superagent){
 
 ```
 
-## Passing a URL or a base URL to a test
+## Setting a base URL for all requests in the test
 
 ``` bash
-node index.js -u https://api.twitter.com twitterBaseURL.js  
+node index.js -b https://api.twitter.com twitterBaseURL.js  
 ```
 
 Where ```twitterBaseURL.js``` contents are:
 ```
-module.exports = function testTwitterAuth(superagent,url){
+module.exports = function testTwitterAuth(superagent){
 
     var res = superagent
-                .get(url+"/1.1/statuses/mentions_timeline.json")
+                .get("/1.1/statuses/mentions_timeline.json")
                 .query({
                     count : 2,
                     since_id :14927799 
