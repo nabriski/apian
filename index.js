@@ -26,13 +26,29 @@ cli
 
 if(cli.baseurl){
     methods.forEach(function(method){
+
       var name = 'delete' == method ? 'del' : method;
       method = method.toUpperCase();
+
       superagent[name] = function(url, fn){
         var req = superagent(method, url[0] === "/" ? cli.baseurl + url : url);
         fn && req.end(fn);
         return req;
       };
+
+     superagent.agent.prototype[name] = function(url, fn){
+        var req = superagent(method, url[0] === "/" ? cli.baseurl + url : url);
+        req.ca(this._ca);
+
+        req.on('response', this.saveCookies.bind(this));
+        req.on('redirect', this.saveCookies.bind(this));
+        req.on('redirect', this.attachCookies.bind(this, req));
+        this.attachCookies(req);
+
+        fn && req.end(fn);
+        return req;
+     };
+
     });
 }
 
@@ -76,10 +92,17 @@ sync.fiber(function(){
                tests = testObj;
             }
 
+            
+            var agent = superagent;
+            if(tests.login){
+                agent = tests.login(superagent);
+                delete tests.login;
+            }
+            
             Object.keys(tests).forEach(function(testName){
                 var test = tests[testName];
                 try{
-                    test(superagent);
+                    test(agent);
                     outputter.onSuccess(testName);
                 }
                 catch(e){

@@ -163,3 +163,39 @@ module.exports = {
     }
 };
 ```
+
+#### Auto Login
+
+If one of the test functions in a file is called ```login``` it will be called before each test in the file.
+The ```login``` function must return a ```superagent.agent``` object with login cookies attached so it can be passed to each function instead of the standard ```superagent```.
+
+For example:
+``` javascript
+module.exports = {
+
+    login : function(superagent){
+
+        var res = superagent
+                .post("/signin/")
+                .send({
+                        username: "bob", 
+                        password: "123456"
+                })
+                .end();
+
+        var agent = superagent.agent();
+        agent.saveCookies(res);    
+        return agent;
+    },
+
+    "first test" : function(superagent){
+
+        //the superagent object here already contains the login cookies
+        var res = superagent
+            .get("/fetch/some/resource/")
+            .end();
+
+        // test code, assertions  ...
+    }
+};
+```
