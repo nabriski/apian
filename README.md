@@ -28,12 +28,14 @@ module.exports = function testSample(superagent){
 And the output is:
 ```
 {
-    "tests": [
-        {
-            "name": "testSample",
-            "outcome": "passed"
+    "files": {
+        "test.js": {
+            "testSample": {
+                "outcome": "success"
+            }
         }
-    ]
+    },
+    "outcome": "success"
 }
 ```
 
@@ -109,7 +111,7 @@ node index.js -b https://api.twitter.com twitterBaseURL.js
 ```
 
 Where ```twitterBaseURL.js``` contents are:
-```
+``` javascript
 module.exports = function testTwitterAuth(superagent){
 
     var res = superagent
