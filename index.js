@@ -36,17 +36,11 @@ if(cli.baseurl){
     });
 }
 
-/*
-if(cli.output === "json"){
-    output = {tests:[]};
-}
-else if(cli.output === "html"){
-    output = "";
-}
-*/
-
 if(cli.output === "html"){
     outputter = require('./outputs/html');
+}
+else if(cli.output === "json"){
+    outputter = require('./outputs/json');
 }
 
 tests           = require(path.resolve(cli.args[0]));
