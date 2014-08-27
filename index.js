@@ -8,11 +8,10 @@ var path            = require('path'),
     sync            = require('synchronize'),
     chai            = require('chai'),
     should          = chai.should(),
-    colors          = require('colors'),
-    ansi_up         = require('ansi_up'),
     cli             = require('commander'),
     allTestsPassed  = true,
     tests,
+    outputter = require('./outputs/console'),
     output;
 
 sync(superagent.Request.prototype, 'end');
@@ -37,15 +36,22 @@ if(cli.baseurl){
     });
 }
 
+/*
 if(cli.output === "json"){
     output = {tests:[]};
 }
 else if(cli.output === "html"){
     output = "";
 }
+*/
+
+if(cli.output === "html"){
+    outputter = require('./outputs/html');
+}
 
 tests           = require(path.resolve(cli.args[0]));
 //-------------------------------------------
+/*
 function onException(err,testName) {
 
   if(cli.output === "json"){
@@ -65,7 +71,7 @@ function onException(err,testName) {
   console.log(msg);
   console.log(err.stack);
   console.log("Failed".red);
-}
+}*/
 //-------------------------------------------
 
 //for a single function module
@@ -77,55 +83,60 @@ if(typeof(tests) === "function"){
 
 sync.fiber(function(){
 
-    Object.keys(tests).forEach(function(testName){
 
-        if(!cli.output || cli.output === "console"){
-            console.log(["Running test:",testName].join(" ").cyan.bold.inverse);
-        }
-        else if(cli.output === "html"){
-            output+= ["Running test:",testName].join(" ").cyan.bold.inverse + "\n";
-        }
+    //console.log(cli.args[0].white.bold);
+    outputter.onTestFile(cli.args[0]);
+    Object.keys(tests).forEach(function(testName){
 
         var test = tests[testName];
         try{
             test(superagent);
+            /*
             if(cli.output === "json"){
                output.tests.push({name:testName,outcome:"passed"}); 
             }
             else if(cli.output === "html"){
-                output+= "Passed".green.bold + "\n"; 
+                output+= ("✔ "+testName).white + "\n"; 
             }
             else{
-                console.log("Passed".green.bold);
-            }
+                console.log(("✔ "+testName).white);
+            }*/
+            outputter.onSuccess(testName);
         }
         catch(e){
-            onException(e,testName);
+            outputter.onException(testName,e);
             allTestsPassed = false;
         }
     });
 
+    if(allTestsPassed){
+        outputter.onFinishSuccess();
+    }
+    else{
+        outputter.onFinishFailure();
+    }
+    /*
     if(cli.output === "json"){
         console.log(JSON.stringify(output,null,4));
     }
     else if(cli.output === "html"){
         if(allTestsPassed){
-            output+= "All tests have passed.".green.bold.inverse + "\n";
+            output+= "All tests have passed.".green.bold + "\n";
         }
         else{
-            output+= "Some tests have failed.".red.bold.inverse + "\n";
+            output+= "Some tests have failed.".red.bold + "\n";
         }
         console.log(ansi_up.ansi_to_html(output));
     }
     else{
         if(allTestsPassed){
-            console.log("All tests have passed.".green.bold.inverse);
+            console.log("All tests have passed.".green.bold);
         }
         else{
-            console.log("Some tests have failed.".red.bold.inverse);
+            console.log("Some tests have failed.".red.bold);
         }
 
-    }
+    }*/
 
 });
 
