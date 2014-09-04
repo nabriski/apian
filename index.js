@@ -24,6 +24,20 @@ cli
   .option('-b, --baseurl <url>', 'Base URL to prefix to each request')
   .parse(process.argv);
 
+//change json parser to have a friendlier error message
+superagent.parse['application/json'] = function(res, fn){
+    res.text = '';
+    res.setEncoding('utf8');
+    res.on('data', function(chunk){ res.text += chunk; });
+    res.on('end', function(){
+        try {
+            fn(null, JSON.parse(res.text));
+        } catch (err) {
+            fn(new Error("Response body is not valid JSON:\n"+res.text),null);
+        }
+    }); 
+};
+
 if(cli.baseurl){
     methods.forEach(function(method){
 
@@ -67,7 +81,6 @@ sync.fiber(function(){
         var files = [],
             fstats = fs.statSync(arg),
             tests;
-
 
         if(fstats.isFile()){
             files.push(arg);

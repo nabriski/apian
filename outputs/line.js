@@ -16,7 +16,7 @@ module.exports = function(out){
             msg = msg.replace(String(err.expected),String(err.expected).yellow.bold);
             msg = msg.replace(String(err.actual),String(err.actual).yellow.bold);
 
-            out.write(msg.white+"\n");
+            out.write(msg+"\n");
             out.write(err.stack.white+"\n");
             out.write("Failed".red+"\n");
         },

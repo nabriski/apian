@@ -37,5 +37,7 @@
     "superagent": "^0.18.2",
     "synchronize": "^0.9.8"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "ys": "^0.3.4"
+  }
 }
