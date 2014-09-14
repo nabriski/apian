@@ -100,57 +100,51 @@ sync.fiber(function(){
             outputter.onTestFile(file);
             tests = require(path.resolve(file));
             //for single test files
-            var isFiltered = true;
             if(typeof(tests) === "function"){
                var testObj = {};
                testObj[tests.name] = tests;
                tests = testObj;
                // Function test cannot have a filters.
-               isFiltered = false;
             }else if( cli.filters && tests.tags ){
                 // Filter by tags, received from command line 
                 var filters = JSON.parse(cli.filters)
-                Object.keys(filters).forEach( function(filterKey){
-                    
+                var qualify = Object.keys(filters).every( function(filterKey){
                     var filter = filters[filterKey];
                     var tagValue = tests.tags[filterKey]
                     // Test can support multiple value for a tag. the filter needs to be tested for all of them.
                     if( Array.isArray(tagValue) ){
-                        tagValue.forEach( function(tag){
-                            if( tag === filter ){
-                                isFiltered = false;
-                            }    
+                        return tagValue.some( function(tag){
+                            return tag === filter;
                         });
                     }else{
-                        if( tagValue === filter ){
-                            isFiltered = false;
-                        }
+                        return tagValue === filter;
                     }
-                });
-            }
 
-            if( ! isFiltered ){
-                var agent = superagent;
-                if(tests.login){
-                    agent = tests.login(superagent);
-                    delete tests.login;
+                });
+                if( ! qualify ){
+                    return false;
                 }
-                Object.keys(tests).forEach(function(testName){
-                    var test = tests[testName];
-                    if( typeof(test) !== "function" ){
-                       return; 
-                    }
-                    try{
-                        test(agent);
-                        outputter.onSuccess(testName);
-                    }
-                    catch(e){
-                        outputter.onException(testName,e);
-                        allTestsPassed = false;
-                    }
-                });
             }
 
+            //Tags is no longer needed, make sure it's no longer present.
+            delete tests.tags;
+
+            var agent = superagent;
+            if(tests.login){
+                agent = tests.login(superagent);
+                delete tests.login;
+            }
+            Object.keys(tests).forEach(function(testName){
+                var test = tests[testName];
+                try{
+                    test(agent);
+                    outputter.onSuccess(testName);
+                }
+                catch(e){
+                    outputter.onException(testName,e);
+                    allTestsPassed = false;
+                }
+            });
             
         });
     });
