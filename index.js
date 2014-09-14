@@ -22,6 +22,7 @@ cli
   .version('0.0.5')
   .option('-o, --output <console|json|html>', 'Output format, default is console')
   .option('-b, --baseurl <url>', 'Base URL to prefix to each request')
+  .option('-f, --filters <{key:filter | [filter] }>', 'Filter test by tag')
   .parse(process.argv);
 
 //change json parser to have a friendlier error message
@@ -99,30 +100,56 @@ sync.fiber(function(){
             outputter.onTestFile(file);
             tests = require(path.resolve(file));
             //for single test files
+            var isFiltered = true;
             if(typeof(tests) === "function"){
                var testObj = {};
                testObj[tests.name] = tests;
                tests = testObj;
+               // Function test cannot have a filters.
+               isFiltered = false;
+            }else if( cli.filters && tests.tags ){
+                // Filter by tags, received from command line 
+                var filters = JSON.parse(cli.filters)
+                Object.keys(filters).forEach( function(filterKey){
+                    
+                    var filter = filters[filterKey];
+                    var tagValue = tests.tags[filterKey]
+                    // Test can support multiple value for a tag. the filter needs to be tested for all of them.
+                    if( Array.isArray(tagValue) ){
+                        tagValue.forEach( function(tag){
+                            if( tag === filter ){
+                                isFiltered = false;
+                            }    
+                        });
+                    }else{
+                        if( tagValue === filter ){
+                            isFiltered = false;
+                        }
+                    }
+                });
             }
 
-            
-            var agent = superagent;
-            if(tests.login){
-                agent = tests.login(superagent);
-                delete tests.login;
+            if( ! isFiltered ){
+                var agent = superagent;
+                if(tests.login){
+                    agent = tests.login(superagent);
+                    delete tests.login;
+                }
+                Object.keys(tests).forEach(function(testName){
+                    var test = tests[testName];
+                    if( typeof(test) !== "function" ){
+                       return; 
+                    }
+                    try{
+                        test(agent);
+                        outputter.onSuccess(testName);
+                    }
+                    catch(e){
+                        outputter.onException(testName,e);
+                        allTestsPassed = false;
+                    }
+                });
             }
-            
-            Object.keys(tests).forEach(function(testName){
-                var test = tests[testName];
-                try{
-                    test(agent);
-                    outputter.onSuccess(testName);
-                }
-                catch(e){
-                    outputter.onException(testName,e);
-                    allTestsPassed = false;
-                }
-            });
 
             
         });

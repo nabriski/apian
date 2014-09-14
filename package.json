@@ -11,7 +11,7 @@
     "apian": "index.js"
   },
   "scripts": {
-    "test": "nodeunit tests"
+    "test": "node tests/nodeunit.js"
   },
   "repository": {
     "type": "git",
@@ -38,6 +38,7 @@
     "synchronize": "^0.9.8"
   },
   "devDependencies": {
-    "ys": "^0.3.4"
+    "ys": "^0.3.4",
+    "nodeunit": "^0.9.0"
   }
 }
