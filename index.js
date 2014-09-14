@@ -101,12 +101,17 @@ sync.fiber(function(){
             tests = require(path.resolve(file));
             //for single test files
             if(typeof(tests) === "function"){
-               var testObj = {};
-               testObj[tests.name] = tests;
-               tests = testObj;
+                if( cli.filters )
+                    return false;
+                var testObj = {};
+                testObj[tests.name] = tests;
+                tests = testObj;
                // Function test cannot have a filters.
-            }else if( cli.filters && tests.tags ){
+            }else if( cli.filters ){
                 // Filter by tags, received from command line 
+                if( ! tests.tags )
+                    return false;
+
                 var filters = JSON.parse(cli.filters)
                 var qualify = Object.keys(filters).every( function(filterKey){
                     var filter = filters[filterKey];
