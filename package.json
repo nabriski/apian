@@ -1,7 +1,7 @@
 {
   "name": "apian",
   "version": "0.0.9",
-  "description": "apian =====",
+  "description": "apian API testing tool",
   "main": "index.js",
   "preferGlobal": true,
   "directories": {
