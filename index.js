@@ -22,6 +22,7 @@ cli
   .version('0.0.5')
   .option('-o, --output <console|json|html>', 'Output format, default is console')
   .option('-b, --baseurl <url>', 'Base URL to prefix to each request')
+  .option('-f, --filters <{key:filter | [filter] }>', 'Filter test by tag')
   .parse(process.argv);
 
 //change json parser to have a friendlier error message
@@ -103,15 +104,36 @@ sync.fiber(function(){
                var testObj = {};
                testObj[tests.name] = tests;
                tests = testObj;
+               // Function test cannot have a filters.
+            }else if( cli.filters && tests.tags ){
+                // Filter by tags, received from command line 
+                var filters = JSON.parse(cli.filters)
+                var qualify = Object.keys(filters).every( function(filterKey){
+                    var filter = filters[filterKey];
+                    var tagValue = tests.tags[filterKey]
+                    // Test can support multiple value for a tag. the filter needs to be tested for all of them.
+                    if( Array.isArray(tagValue) ){
+                        return tagValue.some( function(tag){
+                            return tag === filter;
+                        });
+                    }else{
+                        return tagValue === filter;
+                    }
+
+                });
+                if( ! qualify ){
+                    return false;
+                }
             }
 
-            
+            //Tags is no longer needed, make sure it's no longer present.
+            delete tests.tags;
+
             var agent = superagent;
             if(tests.login){
                 agent = tests.login(superagent);
                 delete tests.login;
             }
-            
             Object.keys(tests).forEach(function(testName){
                 var test = tests[testName];
                 try{
@@ -123,7 +145,6 @@ sync.fiber(function(){
                     allTestsPassed = false;
                 }
             });
-
             
         });
     });
