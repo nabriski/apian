@@ -145,3 +145,36 @@ exports.testFilterMultipleTags = function(test){
             }
     );
 };
+
+
+exports.testFilterNoTags = function(test){
+    exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -f '{\"env\":\"local\",\"role\":\"api\"}'",
+            function(error, stdout, stderr){
+                test.equals(
+                    stdout,
+                    [
+                        "tests/test-files/sampleFilter.js".white.bold,
+                        "All tests have passed.".green.bold,
+                        ""
+                    ].join("\n")
+                );  
+                test.done();  
+            }
+    );
+};
+
+exports.testFilterFunctionTest = function(test){
+    exec("node index.js -b http://localhost:8888 tests/test-files/sample.js -f '{\"env\":\"local\",\"role\":\"api\"}'",
+            function(error, stdout, stderr){
+                test.equals(
+                    stdout,
+                    [
+                        "tests/test-files/sample.js".white.bold,
+                        "All tests have passed.".green.bold,
+                        ""
+                    ].join("\n")
+                );  
+                test.done();  
+            }
+    );
+};
