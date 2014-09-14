@@ -42,7 +42,7 @@ And the output is:
 ## Usage
 
 ```
-  Usage: index [options]
+  Usage: apian [options]
 
   Options:
 

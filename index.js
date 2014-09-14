@@ -19,7 +19,7 @@ sync(superagent.Request.prototype, 'end');
 chai.config.includeStack = true;
 
 cli
-  .version('0.0.5')
+  .version('0.0.9')
   .option('-o, --output <console|json|html>', 'Output format, default is console')
   .option('-b, --baseurl <url>', 'Base URL to prefix to each request')
   .option('-f, --filters <{key:filter | [filter] }>', 'Filter test by tag')
