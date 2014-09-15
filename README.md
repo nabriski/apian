@@ -50,6 +50,7 @@ And the output is:
     -V, --version                     output the version number
     -o, --output <console|json|html>  Output format, default is console
     -b, --baseurl <url>               Base URL to prefix to each request
+    -f, --filter <filter json>        Json representing the filter to apply, based on the tags present in the filter.
   
 ```
 
@@ -140,7 +141,7 @@ A test file can include one or more tests.
 #### Single test
 ``` javascript
 module.exports = function testName(superagent){
-
+    
     // test body ...
 
 };
@@ -152,6 +153,9 @@ module.exports = function testName(superagent){
 ``` javascript
 module.exports = {
     
+    //Tags for filtering
+    tags{"env":"test"},
+
     "first test name" : function(superagent){
 
         //test body
@@ -198,4 +202,37 @@ module.exports = {
         // test code, assertions  ...
     }
 };
+```
+## Filter
+
+In some cases you might be running apian in different environments i.e production/test. When running it you might want to be able to only run some of the test on a given environment.
+By adding tags to the test file (only available for an object test), when running apian, you can supply filter based on those tags, and only test files that match will run. Any file that does not have tags or a function test will be discarded
+
+For example the following can be targeted to run on both test and dev evironments, and when running integration test.
+
+``` javascript
+module.exports = {
+    
+    //Tags for filtering
+    tags{
+        "env":["test","dev"],
+        "test_type": "integration"
+    },
+
+    ....
+}
+```
+
+These are some examples when the test will be included:
+```
+apian test.js --output json --filter {"env":"test","test_type":"integration"}
+apian test.js --output json --filter {"env":"dev","test_type":"integration"}
+apian test.js --output json --filter {"env":"test"}
+apian test.js --output json --filter {"test_type":"integration"}
+```
+These are examples when the test will be filtered:
+```
+apian test.js --output json --filter {"env":"prod"}
+apian test.js --output json --filter {"env":"prod","test_type":"integration"}
+apian test.js --output json --filter {"service":"click_server"}
 ```
