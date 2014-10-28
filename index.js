@@ -8,11 +8,15 @@ var path            = require('path'),
     methods         = require('methods'),
     sync            = require('synchronize'),
     chai            = require('chai'),
-    should          = chai.should(),
+    //should          = chai.should(),
     cli             = require('commander'),
     allTestsPassed  = true,
     outputter = require('./outputs/console'),
     output;
+
+chai.should();
+global.expect = chai.expect;
+global.assert = chai.assert;
 
 sync(superagent.Request.prototype, 'end');
 

@@ -36,6 +36,43 @@ exports.testSimpleJSON = function(test){
     );
 };
 //-----------------------------------------------------------
+exports.testExpect = function(test){
+    exec("node index.js -b http://localhost:8888 tests/test-files/expect.js",
+            function(error, stdout, stderr){
+                test.equals(
+                    stdout,
+                    [
+                        "tests/test-files/expect.js".white.bold,
+                        "✔ testExpect".white,
+                        "All tests have passed.".green.bold,
+                        ""
+                    ].join("\n")
+                );  
+                test.done();  
+            }
+    );
+};
+
+//-----------------------------------------------------------
+exports.testAssert = function(test){
+    exec("node index.js -b http://localhost:8888 tests/test-files/assert.js",
+            function(error, stdout, stderr){
+                test.equals(
+                    stdout,
+                    [
+                        "tests/test-files/assert.js".white.bold,
+                        "✔ testAssert".white,
+                        "All tests have passed.".green.bold,
+                        ""
+                    ].join("\n")
+                );  
+                test.done();  
+            }
+    );
+};
+
+//-----------------------------------------------------------
+
 exports.test404Error = function(test){
     exec("node index.js -b http://localhost:8888 tests/test-files/404Error.js",
             function(error, stdout, stderr){
@@ -61,7 +98,6 @@ exports.test404Error = function(test){
             }
     );
 };
-//-----------------------------------------------------------
 //-----------------------------------------------------------
 exports.testFilterProd = function(test){
     exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -f '{\"env\":\"prod\"}'",
