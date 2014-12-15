@@ -21,7 +21,7 @@ cli
   .version('0.0.5')
   .option('-o, --output <console|json|html>', 'Output format, default is console')
   .option('-b, --baseurl <url>', 'Base URL to prefix to each request. Deprecated, instead use config.baseurl')
-  .option('-c, --config <{baseurl: url | { name: url }, filters{ key:filter | [filter] } }>', 'Advanced apian configuration, to add ontop of baseurl and filters')
+  .option('-c, --config <{baseurl: url | { name: url }, filters:{ key:filter | [filter] } }>', 'Advanced apian configuration, to add ontop of baseurl and filters')
   .option('-f, --config_file <file path>', 'Alternative source for configuration. This is only used if no configuration is present in the command line.')
   .parse(process.argv);
 

@@ -13,9 +13,3 @@ module.exports = {
 		})
 	},
 };
-
-
-// No baseurl
-// No config
-// with config multiple url
-// with config single url
