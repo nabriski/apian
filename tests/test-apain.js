@@ -100,7 +100,7 @@ exports.test404Error = function(test){
 };
 //-----------------------------------------------------------
 exports.testFilterProd = function(test){
-    exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -f '{\"env\":\"prod\"}'",
+    exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -c '{\"filters\":{\"env\":\"prod\"}}'",
             function(error, stdout, stderr){
                 test.equals(
                     stdout,
@@ -117,7 +117,7 @@ exports.testFilterProd = function(test){
 };
 
 exports.testFilterStg = function(test){
-    exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -f '{\"env\":\"stg\"}'",
+    exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -c '{\"filters\":{\"env\":\"stg\"}}'",
             function(error, stdout, stderr){
                 test.equals(
                     stdout,
@@ -134,7 +134,7 @@ exports.testFilterStg = function(test){
 };
 
 exports.testFilterLocal = function(test){
-    exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -f '{\"env\":\"local\"}'",
+    exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -c '{\"filters\":{\"env\":\"local\"}}'",
             function(error, stdout, stderr){
                 test.equals(
                     stdout,
@@ -150,7 +150,7 @@ exports.testFilterLocal = function(test){
 };
 
 exports.testNoFilterMultipleTags = function(test){
-    exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -f '{\"env\":\"prod\",\"role\":\"api\"}'",
+    exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -c '{\"filters\":{\"env\":\"prod\",\"role\":\"api\"}}'",
             function(error, stdout, stderr){
                 test.equals(
                     stdout,
@@ -167,7 +167,7 @@ exports.testNoFilterMultipleTags = function(test){
 };
 
 exports.testFilterMultipleTags = function(test){
-    exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -f '{\"env\":\"local\",\"role\":\"api\"}'",
+    exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -c '{\"filters\":{\"env\":\"local\",\"role\":\"api\"}}'",
             function(error, stdout, stderr){
                 test.equals(
                     stdout,
@@ -184,7 +184,7 @@ exports.testFilterMultipleTags = function(test){
 
 
 exports.testFilterNoTags = function(test){
-    exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -f '{\"env\":\"local\",\"role\":\"api\"}'",
+    exec("node index.js -b http://localhost:8888 tests/test-files/sampleFilter.js -c '{\"filters\":{\"env\":\"local\",\"role\":\"api\"}}'",
             function(error, stdout, stderr){
                 test.equals(
                     stdout,
@@ -200,7 +200,7 @@ exports.testFilterNoTags = function(test){
 };
 
 exports.testFilterFunctionTest = function(test){
-    exec("node index.js -b http://localhost:8888 tests/test-files/sample.js -f '{\"env\":\"local\",\"role\":\"api\"}'",
+    exec("node index.js -b http://localhost:8888 tests/test-files/sample.js -c '{\"filters\":{\"env\":\"local\",\"role\":\"api\"}}'",
             function(error, stdout, stderr){
                 test.equals(
                     stdout,
@@ -214,3 +214,90 @@ exports.testFilterFunctionTest = function(test){
             }
     );
 };
+
+exports.testSingleUrlConfiguration = function(test){
+    exec("node index.js -c '{\"baseurl\":\"http://localhost:8888\"}' tests/test-files/simpleJSON.js",
+            function(error, stdout, stderr){
+                test.equals(
+                    stdout,
+                    [
+                        "tests/test-files/simpleJSON.js".white.bold,
+                        "✔ testSimpleJSON".white,
+                        "All tests have passed.".green.bold,
+                        ""
+                    ].join("\n")
+                );  
+                test.done();  
+            }
+    );
+};
+
+exports.testUrlConfiguration = function(test){
+    exec("node index.js -c '{\"baseurl\":{\"tomix\":\"http://localhost:8888\"}}' tests/test-files/simpleJSON.js",
+            function(error, stdout, stderr){
+                test.equals(
+                    stdout,
+                    [
+                        "tests/test-files/simpleJSON.js".white.bold,
+                        "✔ testSimpleJSON".white,
+                        "All tests have passed.".green.bold,
+                        ""
+                    ].join("\n")
+                );  
+                test.done();  
+            }
+    );
+};
+
+exports.testNoDependency = function(test){
+    exec("node index.js -c '{\"baseurl\":{\"google\":\"http://localhost:8888\"}}' tests/test-files/noDependencies.js",
+            function(error, stdout, stderr){
+                test.ok(
+                    stdout.indexOf(
+                        [
+                            "tests/test-files/noDependencies.js".white.bold,
+                            "✘ resolve dependencies".red,
+                            "Error".red +" "+"Missing dependencies- [\"yahoo\"]".white,
+                            ""
+                        ].join("\n")
+                    ) === 0
+                );  
+                test.done();  
+            }
+    );
+};
+
+exports.testFoundDependency = function(test){
+    exec("node index.js -c '{\"baseurl\":{\"google\":\"http://localhost:8888\"}}' tests/test-files/foundDependencies.js",
+            function(error, stdout, stderr){
+                test.equals(
+                    stdout,
+                    [
+                        "tests/test-files/foundDependencies.js".white.bold,
+                        "✔ test".white,
+                        "All tests have passed.".green.bold,
+                        ""
+                    ].join("\n")
+                );  
+                test.done();  
+            }
+    );
+};
+
+exports.testSimpleJSONWithConfigFile = function(test){
+    exec("node index.js -b http://localhost:8888 tests/test-files/simpleJSON.js -f tests/test_config.json",
+            function(error, stdout, stderr){
+                test.equals(
+                    stdout,
+                    [
+                        "tests/test-files/simpleJSON.js".white.bold,
+                        "✔ testSimpleJSON".white,
+                        "All tests have passed.".green.bold,
+                        ""
+                    ].join("\n")
+                );  
+                test.done();  
+            }
+    );
+};
+
