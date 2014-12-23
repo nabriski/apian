@@ -22,7 +22,7 @@ global.assert = chai.assert;
 chai.config.includeStack = true;
 
 cli
-  .version('0.0.10')
+  .version('0.1.3')
   .option('-o, --output <console|json|html>', 'Output format, default is console')
   .option('-b, --baseurl <url>', 'Base URL to prefix to each request. Deprecated, instead use config.baseurl')
   .option('-c, --config <{baseurl: url | { name: url }, filters:{ key:filter | [filter] } }>', 'Advanced apian configuration, to add ontop of baseurl and filters')
