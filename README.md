@@ -69,7 +69,7 @@ Example configuration:
 ``` json
     {
         "baseurl": {
-            "google": "http://www.google.com" 
+            "google": "http://www.google.com",
             "yahoo": "http://www.yahoo.com" 
         },
         "filters": { 
