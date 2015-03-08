@@ -183,7 +183,7 @@ sync.fiber(function(){
                 testObj[tests.name] = tests;
                 tests = testObj;
                // Function test cannot have a filters.
-            }else if( config.filters ){
+            }else if( config.filters && Object.keys(config.filters).length > 0){
                 // Filter by tags, received from command line 
                 if( ! tests.tags )
                     return false;
